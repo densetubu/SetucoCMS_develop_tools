@@ -6,6 +6,7 @@
 # 例)
 # $ sh make_release.sh 1.3.0
 #
+# スクリプトを実行した時点でのdensetubu/SetucoCMSのmasterから取ってくるので柔軟性に欠けるかもしれない
 
 is_numeric() {
     expr "$1" + 1 > /dev/null 2>&1
@@ -39,10 +40,16 @@ then
     exit 1
 fi
 
+if [ -f 'SetucoCMS' -o -d 'SetucoCMS' ]
+then
+    echo 'ファイルかディレクトリが既に存在します'
+    exit
+fi
+
 echo 'バージョン' $v_major.$v_minor.$v_patch 'のリリースを作成します'
 echo
 
-git clone git@github.com:densetubu/SetucoCMS.git SetucoCMS
+git clone http://github.com/densetubu/SetucoCMS.git
 
 cd SetucoCMS
 git checkout -b $v_major.$v_minor
@@ -50,7 +57,7 @@ git checkout -b $v_major.$v_minor
 git tag v$v_major.$v_minor.$v_patch
 #git push origin v$v_major.$v_minor.$v_patch
 chmod 777 public/ public/media/ application/configs/
-sed -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample > public/.htaccess.sample
+sed -i -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
 cd ../
 
 echo '圧縮中....'
