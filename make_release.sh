@@ -58,6 +58,10 @@ git tag v$v_major.$v_minor.$v_patch
 #git push origin v$v_major.$v_minor.$v_patch
 chmod 777 public/ public/media/ application/configs/
 sed -i '' -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
+
+#MACだと.htaccess-eファイルが作成されてしまうので
+rm "public/.htaccess.sample-e" > /dev/null
+
 cd ../
 
 echo '圧縮中....'
