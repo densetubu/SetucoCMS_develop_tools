@@ -60,7 +60,10 @@ chmod 777 public/ public/media/ application/configs/
 sed -i '' -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
 
 #MACだと.htaccess-eファイルが作成されてしまうので
-rm "public/.htaccess.sample-e" > /dev/null
+if [ -f 'public/.htaccess.sample-e' ]
+then
+    \rm -f 'public/.htaccess.sample-e'
+fi
 
 cd ../
 
