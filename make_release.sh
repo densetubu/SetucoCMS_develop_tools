@@ -110,9 +110,7 @@ then
     exit 5
 fi
 git checkout -b $v_major.$v_minor
-#git push origin $v_major.$v_minor
 git tag v$v_major.$v_minor.$v_patch
-#git push origin v$v_major.$v_minor.$v_patch
 chmod 777 public/ public/media/ application/configs/
 sed -i'' -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
 
@@ -130,10 +128,6 @@ tar pzcvf "SetucoCMS_$v_major.$v_minor.$v_patch.tar.gz" \
         --exclude=".gitignore" \
         --exclude="tests" \
         SetucoCMS > /dev/null
-
-
-#echo '作業ディレクトリを削除'
-#rm -rf SetucoCMS/
 
 
 echo '完了!'
