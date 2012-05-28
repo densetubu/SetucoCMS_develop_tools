@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION='0.1'
+VERSION='0.2'
 
 CMDNAME=$(basename $0)
 
