@@ -39,10 +39,8 @@ done
 shift `expr $OPTIND - 1`
 
 #リリース元ブランチ
-if [ -n $BRANCH ]
+if [ -z $BRANCH ]
 then
-    echo -n ''
-else
     BRANCH='master'
 fi
 
@@ -115,10 +113,7 @@ chmod 777 public/ public/media/ application/configs/
 sed -i'' -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
 
 #MACだと.htaccess-eファイルが作成されてしまうので
-if [ -f 'public/.htaccess.sample-e' ]
-then
-    \rm -f 'public/.htaccess.sample-e'
-fi
+\rm -f 'public/.htaccess.sample-e'
 
 cd ../
 
