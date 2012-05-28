@@ -50,8 +50,8 @@ then
     help
 
     #TODO: 標準エラー出力
-    echo 'error : 引数にリリースするバージョンを指定してください'
-    echo '例) $' $0 '1.2.3'
+    echo 'error : リリースするバージョンを指定してください'
+    echo '例) $' $CMDNAME '1.2.3'
     exit 1
 fi
 
@@ -65,8 +65,8 @@ then
 
     #TODO: 標準エラー出力
     echo 'error : 書式が不正です'
-    echo '引数にリリースするバージョンを指定してください'
-    echo '例) $' $0 '1.2.3'
+    echo 'リリースするバージョンを指定してください'
+    echo '例) $' $CMDNAME '1.2.3'
     exit 2
 fi
 
@@ -77,13 +77,13 @@ echo
 
 if [ $FLG_CLONE -gt 0 ]
 then
-    echo 'リモートのmasterブランチからリリースを作成します。'
+    echo 'リモートの' $BRANCH 'ブランチからリリースを作成します'
     DIR='SetucoCMS'
     #ディレクトリチェック
     if [ -f $DIR -o -d $DIR ]
     then
         #TODO: 標準エラー出力
-        echo 'ファイルかディレクトリが既に存在します'
+        echo 'ファイルかディレクトリが既に存在します : SetucoCMS/'
         exit 3
     fi
 
@@ -125,4 +125,5 @@ tar pzcvf "SetucoCMS_$v_major.$v_minor.$v_patch.tar.gz" \
         $DIR > /dev/null
 
 
-echo '完了!'
+echo 'リリース作成完了!'
+echo
