@@ -16,6 +16,11 @@ class CommentReplace
     const PARAM_MIN_COUNT = 4;
 
     /**
+     * スクリプ名の場所
+     */
+    const POSITION_SCRIPT_NAME = 0;
+
+    /**
      * アノテーションタグの場所
      */
     const POSITION_ANNOTATION = 1;
@@ -31,6 +36,7 @@ class CommentReplace
     const POSITION_PATH_BEGIN = 3;
 
     private $_params;
+    private $_scriptName;
 
     private $_annotation;
     private $_word;
@@ -55,14 +61,19 @@ class CommentReplace
     {
         $this->_params = $params;
 
+        $this->_scriptName = $params[self::POSITION_SCRIPT_NAME];
 
         for ($i = self::POSITION_PATH_BEGIN; $i < count($params); $i++) {
             $this->_targetFiles[] = $params[$i];
         }
 
-        $this->_annotation = $params[self::POSITION_ANNOTATION];
-        $this->_word = $params[self::POSITION_WORD];
+        if (isset($params[self::POSITION_ANNOTATION])) {
+            $this->_annotation = $params[self::POSITION_ANNOTATION];
+        }
 
+        if (isset($params[self::POSITION_WORD])) {
+            $this->_word = $params[self::POSITION_WORD];
+        }
 
     }
 
@@ -244,15 +255,15 @@ class CommentReplace
      * @return void
      * @author charlesvineyard suzuki-mar
      */
-    public function printUsage()
+    public function usageMessage()
     {
         // $argv[0] means this script file.
         // $argv[1] --args is passing after arguments to script.
-        echo "usage:\n"
-        . "\tphp " . basename(__FILE__) . " {annotation} {words} {file or directory list}\n"
+        $message = "usage:\n"
+        . "\tphp " . $this->_scriptName . " {annotation} {words} {file or directory list}\n"
         . "example:\n"
-        . "\tindex.php ファイルの @license の内容を\"新しい内容文\"に置換するときの例\n"
-        . "\tphp " . basename(__FILE__) . " license 新しい内容文 index.php\n"
+        . "\tindex.php ファイルの @license の内容を\"新しいライセンス\"に置換するときの例\n"
+        . "\tphp " . $this->_scriptName . " license 新しいライセンス index.php\n"
         . "{annotation}\n"
         . "\t置換対象の、@無しのアノテーションを指定します。\n"
         . "{words}\n"
@@ -262,6 +273,8 @@ class CommentReplace
         . "\tファイルはスペース区切りで複数指定可能です。\n"
         . "\tディレクトリを指定すると再帰的に置換します。\n"
         . "\t隠しファイルは含まれません。\n";
+
+        return $message;
     }
 
 }
