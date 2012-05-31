@@ -19,8 +19,8 @@ class CommentReplaceTest extends PHPUnit_Framework_TestCase
     {
         return array(
             'hoge.php',
-            'annotation',
-            'words',
+            'target',
+            'after',
         );
     }
 
@@ -111,8 +111,25 @@ class CommentReplaceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $commentReplace->getAllList());
     }
 
-}
+    public function test_beforeRunningMessage_実行前メッセージを取得する()
+    {
+        $this->assertTrue(is_string($this->_currentCommentReplace->beforeRunningMessage()));
+    }
 
+    public function test_rewriteAnnotation_アノテーションを置換する()
+    {
+        $copyPath       = ConstDirPath::FIXTURE_FILE_PATH() . '/comment_replace_target_before.php';
+        $targetPath     = ConstDirPath::FIXTURE_FILE_PATH() . '/comment_replace_target.php';
+        $expectedPath   = ConstDirPath::FIXTURE_FILE_PATH() . '/comment_replace_target_after.php';
+
+        copy($copyPath, $targetPath);
+
+        $this->_currentCommentReplace->rewriteAnnotation($targetPath);
+        $this->assertFileEquals($expectedPath, $targetPath);
+    }
+
+
+}
 
 
 
