@@ -93,6 +93,16 @@ class CommentReplaceTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($commentReplace->isPrintUsage());
     }
 
+    public function test_isPrintUsage_1番目のパラメーターにアンスコhだったらTrueを返す()
+    {
+        $params = $this->_baseParams();
+        $params[CommentReplace::POSITION_ANNOTATION] = '-h';
+        $params[] = 'hoge.php';
+
+        $commentReplace = new CommentReplace($params);
+        $this->assertTrue($commentReplace->isPrintUsage());
+    }
+
     public function test_isPrintUsage_パラメーター配列が4要素以上の場合はFalseを返す()
     {
         $this->assertFalse($this->_currentCommentReplace->isPrintUsage());

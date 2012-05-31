@@ -107,7 +107,15 @@ class CommentReplace
      */
     public function isPrintUsage()
     {
-        return (count($this->_params) < CommentReplace::PARAM_MIN_COUNT);
+        if (count($this->_params) < CommentReplace::PARAM_MIN_COUNT) {
+            return true;
+        }
+
+        if ($this->_params[self::POSITION_ANNOTATION] === '-h') {
+            return true;
+        }
+
+        return false;
     }
 
     /**
