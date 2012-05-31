@@ -1,5 +1,5 @@
 <?php
-require_once 'bootstarap.php';
+require_once 'bootstrap.php';
 require_once 'CommentReplace.php';
 
 
