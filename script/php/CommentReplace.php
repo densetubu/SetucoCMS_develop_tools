@@ -30,6 +30,8 @@ class CommentReplace
      */
     const POSITION_PATH_BEGIN = 3;
 
+    private $_params;
+
     private $_annotation;
     private $_word;
     /**
@@ -51,12 +53,17 @@ class CommentReplace
 
     public function __construct(array $params)
     {
+        $this->_params = $params;
+
+
         for ($i = self::POSITION_PATH_BEGIN; $i < count($params); $i++) {
             $this->_targetFiles[] = $params[$i];
         }
 
         $this->_annotation = $params[self::POSITION_ANNOTATION];
         $this->_word = $params[self::POSITION_WORD];
+
+
     }
 
     /**
@@ -98,9 +105,9 @@ class CommentReplace
      * @return boolean 使い方を表示するか
      * @author suzuki-mar
      */
-    public function isPrintUsage($paramter)
+    public function isPrintUsage()
     {
-        return ($paramter < CommentReplace::PARAM_MIN_COUNT);
+        return (count($this->_params) < CommentReplace::PARAM_MIN_COUNT);
     }
 
     /**

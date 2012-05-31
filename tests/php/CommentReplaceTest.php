@@ -87,14 +87,15 @@ class CommentReplaceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(), $this->_fixtureCommentReplace->getList(ConstDirPath::SCRIPT_PATH(), array(), array('css')));
     }
 
-    public function test_isPrintUsage_パラメーター配列が4要素以上の場合はTrueを返す()
+    public function test_isPrintUsage_パラメーター配列が4要素未満の場合はTrueを返す()
     {
-        $this->assertFalse($this->_currentCommentReplace->isPrintUsage(array('hoge.php', 'param1', 'param2', 'param3')));
+        $commentReplace = new CommentReplace($this->_baseParams());
+        $this->assertTrue($commentReplace->isPrintUsage());
     }
 
-    public function test_isPrintUsage_パラメーター配列が4要素未満の場合はFalseを返す()
+    public function test_isPrintUsage_パラメーター配列が4要素以上の場合はFalseを返す()
     {
-        $this->assertFalse($this->_currentCommentReplace->isPrintUsage(array('hoge.php', 'fuga')));
+        $this->assertFalse($this->_currentCommentReplace->isPrintUsage());
     }
 
     public function test_getAllList_パラメーターに指定したすべてのファイルを取得する()
