@@ -1,12 +1,10 @@
 <?php
-
 require_once 'bootstrap.php';
 require_once 'CommentReplace.php';
 
 $commentReplace = new CommentReplace($argv);
 
 echo $commentReplace->beforeRunningMessage();
-
 
 if ($commentReplace->inputAccept()) {
     foreach ($commentReplace->getAllList() as $fileName) {
@@ -16,6 +14,3 @@ if ($commentReplace->inputAccept()) {
 } else {
     echo "アノテーションを書き換えるのをやめます";
 }
-
-
-
