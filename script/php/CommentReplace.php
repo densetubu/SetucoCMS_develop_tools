@@ -6,7 +6,7 @@
  * 引数なしで実行すると、使い方を表示します。
  *
  * @copyright   Copyright (c) 2010 SetucoCMS Project.
- * @author  suzuki-mar
+ * @author  charlesvineyard suzuki-mar
  */
 class CommentReplace
 {
@@ -16,11 +16,30 @@ class CommentReplace
     const PARAM_MIN_COUNT = 4;
 
     /**
+     * アノテーションタグの場所
+     */
+    const POSITION_ANNOTATION = 1;
+
+    /**
+     * 変更するアノテーションの値
+     */
+    const POSITION_WORD = 2;
+
+    /**
      * 実行時引数のうち、ファイル名もしくはディレクトリ名の位置
      */
-    const PATH_POSITION_BEGIN = 3;
+    const POSITION_PATH_BEGIN = 3;
 
+    private $_annotation;
+    private $_word;
+    /**
+     * 置換するファイルを探す対象
+     */
     private $_targetFiles = array();
+    /**
+     * 置換対象のファイル
+     */
+    private $_replaceFiles = array();
 
     /**
      * 置換対象の拡張子
@@ -32,10 +51,43 @@ class CommentReplace
 
     public function __construct(array $params)
     {
-        for ($i = self::PATH_POSITION_BEGIN; $i < count($params); $i++) {
+        for ($i = self::POSITION_PATH_BEGIN; $i < count($params); $i++) {
             $this->_targetFiles[] = $params[$i];
         }
 
+        $this->_annotation = $params[self::POSITION_ANNOTATION];
+        $this->_word = $params[self::POSITION_WORD];
+    }
+
+    /**
+     * 実行前メッセージを取得する
+     *
+     * @return 実行前メッセージ
+     *
+     */
+    public function beforeRunningMessage()
+    {
+        $message = implode("\n", $this->getAllList());
+        $message .= "\n以上のファイルの " . $this->_annotation . ' の内容を ' . $this->_word . " に変換します。\n";
+        $message .= "\nよろしいですか？(y/n)";
+
+        return $message;
+    }
+
+    /**
+     * 承諾を確認する
+     *
+     * @throws yを押さなかったら例外が発生する
+     * @author suzuki-mar
+     */
+    public function inputAccept()
+    {
+        $input = trim(fgets(STDIN, 10));
+
+
+        if (stripos($input, 'y') !== 0) {
+            exit;
+        }
     }
 
     /**
@@ -54,17 +106,46 @@ class CommentReplace
      *
      * ディレクトリ名を指定した場合は、ディレクトリにあるファイルを再帰的に取得する
      *
+     *
+     *
      * @return array ファイル名の配列
      * @author suzuki-mar
      */
     public function getAllList()
     {
-        $fileNames = array();
-        foreach ($this->_targetFiles as $fileName) {
-            $this->getList($fileName, &$fileNames, self::TARGET_FILE_EXTS());
+        //実行を早くするために1回取得したら結果をキャッシュする
+        if (empty($this->_replaceFiles)) {
+            $fileNames = array();
+            foreach ($this->_targetFiles as $fileName) {
+                $this->getList($fileName, &$fileNames, self::TARGET_FILE_EXTS());
+            }
+
+            $this->_replaceFiles = $fileNames;
         }
 
-        return $fileNames;
+        return $this->_replaceFiles;
+    }
+
+    /**
+     * 指定したアノテーション用にファイルを置き換える
+     *
+     * @param string $fileName アノテーションを置換するファイル名
+     * @author suzuki-mar
+     */
+    public function rewriteAnnotation($fileName)
+    {
+        $fileContents = file_get_contents($fileName);
+
+        $ptn = "/(@{$this->_annotation}[\s]+)[^\s].*/";
+        $replacedContents = preg_replace($ptn, '${1}' . $this->_word, $fileContents);
+
+        $fp = fopen($fileName, 'w');
+        flock($fp, LOCK_EX);
+        fputs($fp, $replacedContents);
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return true;
     }
 
     /**

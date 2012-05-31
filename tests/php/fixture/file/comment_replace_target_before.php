@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * @target after
+ * @target before
  * @author setuco
  */
 class comment_replace_target {
