@@ -26,7 +26,7 @@ class ConstDirPath
 
     public static function FIXTURE_PATH()
     {
-        return self::TESt_PATH() . "/fixture";
+        return self::TEST_PATH() . "/fixture";
     }
 
     public static function FIXTURE_FILE_PATH()

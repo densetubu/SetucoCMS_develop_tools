@@ -1,18 +1,48 @@
 <?php
 require_once 'bootstarap.php';
-require_once ConstDirPath::ROOT_PATH() . '/comment_replace.php';
+require_once 'CommentReplace.php';
 
 
 class CommentReplaceTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CommentReplace
+     */
+    private $_currentCommentReplace;
+
+    /**
+     * @var CommentReplace
+     */
+    private $_fixtureCommentReplace;
+
+    private function _baseParams()
+    {
+        return array(
+            'hoge.php',
+            'annotation',
+            'words',
+        );
+    }
+
+    public function setup()
+    {
+        $currentParams = array_merge($this->_baseParams(), array(__FILE__));
+        $this->_currentCommentReplace = new CommentReplace($currentParams);
+
+        $fixtureParams = array_merge($this->_baseParams(), array(ConstDirPath::FIXTURE_FILE_PATH()));
+        $this->_fixtureCommentReplace = new CommentReplace($fixtureParams);
+    }
+
+    
     public function test_isTargetFile_置換対象の拡張子のいずれかだったらtrueを返す()
     {
-        $this->assertTrue(isTargetFile(__FILE__, array('php', 'gif')));
+
+        $this->assertTrue($this->_currentCommentReplace->isTargetFile(__FILE__, array('php', 'gif')));
     }
 
     public function test_isTargetFile_置換対象の拡張子のいずれでもなかったらfalseを返す()
     {
-        $this->assertFalse(isTargetFile(__FILE__, array('jpeg', 'gif')));
+        $this->assertFalse($this->_currentCommentReplace->isTargetFile(__FILE__, array('jpeg', 'gif')));
     }
 
     /**
@@ -20,41 +50,66 @@ class CommentReplaceTest extends PHPUnit_Framework_TestCase
      */
     public function test_isTargetFile_置換対象リストの引数に文字列を渡したらエラーを発生する()
     {
-        $this->assertFalse(isTargetFile(__FILE__, 'gif'));
+        $this->assertFalse($this->_currentCommentReplace->isTargetFile(__FILE__, 'gif'));
     }
 
     public function test_isInvisibleFile_隠しファイルだったらtrueを返す()
     {
-        $this->assertTrue(isInvisibleFile(ConstDirPath::FIXTURE_FILE_PATH() . '/.hidden_file'));
+        $this->assertTrue($this->_currentCommentReplace->isInvisibleFile(ConstDirPath::FIXTURE_FILE_PATH() . '/.hidden_file'));
     }
 
     public function test_isInvisibleFile_存在しないファイルだったら例外を発生させる()
     {
         $this->setExpectedException('InvalidArgumentException');
-        $this->assertTrue(isInvisibleFile(ConstDirPath::FIXTURE_FILE_PATH() . '/not_extists'));
+        $this->assertTrue($this->_fixtureCommentReplace->isInvisibleFile(ConstDirPath::FIXTURE_FILE_PATH() . '/not_extists'));
     }
 
     public function test_isInvisibleFile_通常ファイルだったらfalseを返す()
     {
-        $this->assertFalse(isInvisibleFile(__FILE__));
+        $this->assertFalse($this->_currentCommentReplace->isInvisibleFile(__FILE__));
     }
 
     public function test_getList_ファイルのリストを取得する()
     {
         $targetPath = realpath(ConstDirPath::SCRIPT_PATH() . '/..');
 
-        $expected = array(
-            '/Users/suzukimasayuki/project/setuco_tools/script/php/ConstDirPath.php',
-        );
+        $basePattern    = ConstDirPath::SCRIPT_PATH() . '/*.php';
+        $expected       = array();
+        foreach(glob($basePattern) as $fileName) {
+            $expected[] = $fileName;
+        }
 
-        $this->assertEquals($expected, getList($targetPath, array(), array('php')));
+        $this->assertEquals($expected, $this->_currentCommentReplace->getList($targetPath, array(), array('php')));
     }
 
     public function test_getList_取得対象拡張子のファイルがなかったら空の配列を返す()
     {
-        $this->assertEquals(array(), getList(ConstDirPath::SCRIPT_PATH(), array(), array('css')));
+        $this->assertEquals(array(), $this->_fixtureCommentReplace->getList(ConstDirPath::SCRIPT_PATH(), array(), array('css')));
     }
 
+    public function test_isPrintUsage_パラメーター配列が4要素以上の場合はTrueを返す()
+    {
+        $this->assertFalse($this->_currentCommentReplace->isPrintUsage(array('hoge.php', 'param1', 'param2', 'param3')));
+    }
+
+    public function test_isPrintUsage_パラメーター配列が4要素未満の場合はFalseを返す()
+    {
+        $this->assertFalse($this->_currentCommentReplace->isPrintUsage(array('hoge.php', 'fuga')));
+    }
+
+    public function test_getAllList_パラメーターに指定したすべてのファイルを取得する()
+    {
+        $params = array_merge($this->_baseParams(), array(__FILE__, ConstDirPath::SCRIPT_PATH()));
+        $commentReplace = new CommentReplace($params);
+
+        $expected = array(
+            ConstDirPath::TEST_PATH() . '/CommentReplaceTest.php',
+            ConstDirPath::SCRIPT_PATH() . '/CommentReplace.php',
+            ConstDirPath::SCRIPT_PATH() . '/ConstDirPath.php',
+        );
+
+        $this->assertEquals($expected, $commentReplace->getAllList());
+    }
 
 }
 
