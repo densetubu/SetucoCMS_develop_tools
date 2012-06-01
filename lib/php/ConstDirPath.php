@@ -16,7 +16,7 @@ class ConstDirPath
 
     public static function SCRIPT_PATH()
     {
-        return self::ROOT_PATH() . '/script/php';
+        return self::ROOT_PATH() . '/lib/php';
     }
 
     public static function TEST_PATH()
