@@ -57,7 +57,7 @@ git checkout -b $v_major.$v_minor
 git tag v$v_major.$v_minor.$v_patch
 #git push origin v$v_major.$v_minor.$v_patch
 chmod 777 public/ public/media/ application/configs/
-sed -i -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
+sed --in-place='' -e 's/SetEnv APPLICATION_ENV development/SetEnv APPLICATION_ENV production/' public/.htaccess.sample
 cd ../
 
 echo '圧縮中....'
